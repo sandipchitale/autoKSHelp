@@ -1,6 +1,8 @@
 # autoKSHelp
 
-A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.6.
+A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.7.
+
+![Screenshot](screenshots/autoKSHelp.png)
 
 ## Usage
 
@@ -19,6 +21,7 @@ The popup has four columns, a fixed height (70% of the screen), light/dark/syste
 
 ## Changelog
 
+- **0.0.7** — README screenshot; no functional changes.
 - **0.0.6** — Alternates and Other Commands are now toggle buttons in the header, each labelled with its key (⌥ / ⇧); the old state-changing label is gone.
 - **0.0.5** — Option is now a toggle (press to show/hide alternates, no need to hold it); the header label reads "Alternates" when on.
 - **0.0.4** — ⌃⌘/ now only shows (shortcuts only) or hides the popup; the header always shows a "Hold ⌥ for alternates" hint.
