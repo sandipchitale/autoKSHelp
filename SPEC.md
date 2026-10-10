@@ -2,7 +2,7 @@
 
 Develop a menubar applet that generates a keyboard shortcuts popup using the frontmost apps menu. With options alternate actions. So if I hold the Option key down show those actions instead. The display should be a nicely formated light weight popup window that appeares at the screen center. Add search at the top to narrow down the list. Escape should hide the popup. Use Swift/Swift UI.
 
-## Implemented behavior (v0.0.7)
+## Implemented behavior (v0.0.8)
 
 See `screenshots/autoKSHelp.png` for the popup (4 columns, header toggles, appearance buttons).
 
@@ -28,5 +28,7 @@ See `screenshots/autoKSHelp.png` for the popup (4 columns, header toggles, appea
 **Note:** the hotkeys deliberately avoid Option, since Option toggles the alternate menu items and would switch them on the moment the popup opens.
 
 **Design principle:** the UI must stay stable. Conditional elements reserve their space; layout moves only when the interaction implies it (e.g. expanding an accordion).
+
+**Distribution**: GitHub releases carry `autoKSHelp-<version>.zip` (the signed, non-notarized app); installation steps are in the README.
 
 **Build**: `./build.sh` (bundle + codesign), `./install.sh` (build, sign, install to /Applications, launch), `swift test`.

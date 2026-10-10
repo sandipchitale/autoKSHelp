@@ -1,8 +1,17 @@
 # autoKSHelp
 
-A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.7.
+A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.8.
 
 ![Screenshot](screenshots/autoKSHelp.png)
+
+## Install from a release
+
+1. Download `autoKSHelp-<version>.zip` from the [latest release](https://github.com/sandipchitale/autoKSHelp/releases/latest) and unzip it.
+2. Move `autoKSHelp.app` to `/Applications`.
+3. The app is signed with a local certificate and is **not notarized**, so macOS Gatekeeper blocks the first launch. Either right-click the app → **Open** → **Open**, or run `xattr -dr com.apple.quarantine /Applications/autoKSHelp.app`.
+4. When prompted, grant Accessibility permission (System Settings › Privacy & Security › Accessibility). The ⌘ icon then appears in the menubar; press **⌃⌘/** to try it.
+
+To update, quit the app from its menubar menu, replace it in `/Applications` and launch it again.
 
 ## Usage
 
@@ -21,6 +30,7 @@ The popup has four columns, a fixed height (70% of the screen), light/dark/syste
 
 ## Changelog
 
+- **0.0.8** — README: instructions for installing from a release.
 - **0.0.7** — README screenshot; no functional changes.
 - **0.0.6** — Alternates and Other Commands are now toggle buttons in the header, each labelled with its key (⌥ / ⇧); the old state-changing label is gone.
 - **0.0.5** — Option is now a toggle (press to show/hide alternates, no need to hold it); the header label reads "Alternates" when on.
@@ -33,7 +43,7 @@ The popup has four columns, a fixed height (70% of the screen), light/dark/syste
 
 macOS 13+, Swift 5.9+ toolchain. Grant Accessibility permission (System Settings › Privacy & Security › Accessibility).
 
-## Build
+## Build from source
 
 ```sh
 ./build.sh      # release build -> autoKSHelp.app (codesigned)
