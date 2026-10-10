@@ -2,7 +2,7 @@
 
 Develop a menubar applet that generates a keyboard shortcuts popup using the frontmost apps menu. With options alternate actions. So if I hold the Option key down show those actions instead. The display should be a nicely formated light weight popup window that appeares at the screen center. Add search at the top to narrow down the list. Escape should hide the popup. Use Swift/Swift UI.
 
-## Implemented behavior (v0.0.5)
+## Implemented behavior (v0.0.6)
 
 **Popup**
 - Menubar applet (no Dock icon); the menu shows the app name and version, *Show Shortcuts*, *Show Other Commands* (toggle), *Accessibility Settings…* and *Quit*.
@@ -12,8 +12,8 @@ Develop a menubar applet that generates a keyboard shortcuts popup using the fro
 
 **Content**
 - Shortcuts are read from the frontmost app's menu bar through the Accessibility API (permission required).
-- Pressing **Option** toggles the alternate menu items (e.g. Close All) in place of their base items; releasing it does nothing, so it need not be held. An always-visible label in the header advertises the feature ("Press ⌥ for alternates") and reads "Alternates", highlighted, when on; its width never changes. (The original spec said to hold Option; it was changed to a toggle on request.)
-- *Other Commands*: enabled menu commands without a shortcut are listed in a separate section below the shortcuts (off by default; header toggle or menubar item).
+- Pressing **Option** toggles the alternate menu items (e.g. Close All) in place of their base items; releasing it does nothing, so it need not be held. The header has a toggle button **⌥ Alternates** (clickable too) that shows the state; its label is constant so the layout never shifts. (The original spec said to hold Option; it was changed to a toggle on request.)
+- *Other Commands*: enabled menu commands without a shortcut are listed in a separate section below the shortcuts (off by default; toggled by pressing Shift, the **⇧ Other Commands** header button, or the menubar item).
 
 **Running commands**
 - Click a row, press Enter (first match), or type the shortcut itself (needs ⌘ or ⌃, or an F-key) to run the command in the frontmost app via its menu item.
