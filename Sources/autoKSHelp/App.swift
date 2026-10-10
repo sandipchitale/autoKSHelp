@@ -37,11 +37,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.menu = menu
         menu.delegate = self
 
-        // ⌃⌘/ cycles shortcuts → +other commands → hidden; ⇧⌃⌘/ opens with other commands, then toggles them.
+        // ⌃⌘/ cycles shortcuts → +other commands → hidden; ⇧⌃⌘/ opens with other commands shown. Once open, Shift alone toggles them.
         let base = UInt32(controlKey | cmdKey)
         hotKeys = [
             HotKey(id: 1, keyCode: UInt32(kVK_ANSI_Slash), modifiers: base) { [weak self] in self?.popup.toggle() },
-            HotKey(id: 2, keyCode: UInt32(kVK_ANSI_Slash), modifiers: base | UInt32(shiftKey)) { [weak self] in self?.popup.toggleOthers() },
+            HotKey(id: 2, keyCode: UInt32(kVK_ANSI_Slash), modifiers: base | UInt32(shiftKey)) { [weak self] in self?.popup.openWithOthers() },
         ]
         _ = MenuReader.isTrusted(prompt: true)
     }

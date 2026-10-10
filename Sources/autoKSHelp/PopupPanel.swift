@@ -72,14 +72,11 @@ final class PopupController {
 
     var isVisible: Bool { panel.isVisible }
 
-    /// ⇧-hotkey: open with other commands shown, or toggle them if already open.
-    func toggleOthers() {
-        if isVisible {
-            model.showOtherCommands.toggle()
-        } else {
-            model.showOtherCommands = true
-            show()
-        }
+    /// ⇧-hotkey: open with other commands shown. If already open, Shift itself has just toggled them.
+    func openWithOthers() {
+        guard !isVisible else { return }
+        model.showOtherCommands = true
+        show()
     }
 
     /// Hotkey cycle: shortcuts → shortcuts + other commands → hidden.
@@ -124,8 +121,10 @@ final class PopupController {
         removeMonitors()
         let update: (NSEvent) -> Void = { [weak self] e in
             let opt = e.modifierFlags.contains(.option)
+            let shift = e.modifierFlags.contains(.shift)
             Task { @MainActor in
                 self?.model.optionDown = opt
+                self?.model.setShift(shift)
             }
         }
         if let m = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged, handler: { e in update(e); return e }) {

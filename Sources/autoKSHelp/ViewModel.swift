@@ -21,6 +21,7 @@ final class ViewModel: ObservableObject {
     @Published var loading = false
     @Published var needsPermission = false
     @Published var optionDown = false
+    private(set) var shiftDown = false
     @Published var query = ""
     @Published var size = CGSize(width: 1200, height: 800)
 
@@ -34,12 +35,21 @@ final class ViewModel: ObservableObject {
 
     var othersShown: Bool { showOtherCommands }
 
+    /// Each Shift press while the popup is open toggles "Other Commands" (releasing does nothing).
+    func setShift(_ down: Bool) {
+        if down && !shiftDown { showOtherCommands.toggle() }
+        shiftDown = down
+    }
+
     private var target: NSRunningApplication?
     var onHide: () -> Void = {}
 
     func load(app: NSRunningApplication?) {
         query = ""
         optionDown = NSEvent.modifierFlags.contains(.option)
+        // Shift already held at open (e.g. the ⇧ hotkey): start with other commands shown, no spurious toggle.
+        shiftDown = NSEvent.modifierFlags.contains(.shift)
+        if shiftDown { showOtherCommands = true }
         items = []
         guard MenuReader.isTrusted(prompt: true) else { needsPermission = true; return }
         needsPermission = false
