@@ -79,15 +79,13 @@ final class PopupController {
         show()
     }
 
-    /// Hotkey cycle: shortcuts → shortcuts + other commands → hidden.
+    /// Hotkey: show (shortcuts only) or hide.
     func toggle() {
-        if !isVisible {
+        if isVisible {
+            hide()
+        } else {
             model.showOtherCommands = false
             show()
-        } else if !model.showOtherCommands {
-            model.showOtherCommands = true
-        } else {
-            hide()
         }
     }
 

@@ -1,15 +1,15 @@
 # autoKSHelp
 
-A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.3.
+A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.4.
 
 ## Usage
 
 | Action | How |
 | --- | --- |
-| Show / cycle | **⌃⌘/** — shortcuts → shortcuts + other commands → hidden (or menubar icon → *Show Shortcuts*) |
+| Show / hide | **⌃⌘/** (or menubar icon → *Show Shortcuts*) |
 | Open with other commands shown | **⇧⌃⌘/** |
 | Show / hide other commands (popup open) | Press **⇧ Shift** (releasing does nothing) |
-| Show alternate menu items | Hold **⌥ Option** |
+| Show alternate menu items | Hold **⌥ Option** (the header label "Hold ⌥ for alternates" highlights while held) |
 | Search | Just type (title, menu path or keys) |
 | Run a command | Click a row, press **Enter** (first match), or type its shortcut (needs ⌘ or ⌃, or an F-key) |
 | Hide | **Esc** or click elsewhere |
@@ -19,6 +19,7 @@ The popup has four columns, a fixed height (70% of the screen), light/dark/syste
 
 ## Changelog
 
+- **0.0.4** — ⌃⌘/ now only shows (shortcuts only) or hides the popup; the header always shows a "Hold ⌥ for alternates" hint.
 - **0.0.3** — with the popup open, pressing **Shift** alone shows/hides the other commands; ⇧⌃⌘/ now only opens the popup with them shown.
 - **0.0.2** — hotkey changed from ⌃⌥⌘/ to **⌃⌘/** (and ⇧⌃⌘/): holding Option as part of the hotkey made the Option alternates show as soon as the popup opened.
 - **0.0.1** — first release.

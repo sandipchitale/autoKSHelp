@@ -37,7 +37,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.menu = menu
         menu.delegate = self
 
-        // ⌃⌘/ cycles shortcuts → +other commands → hidden; ⇧⌃⌘/ opens with other commands shown. Once open, Shift alone toggles them.
+        // ⌃⌘/ shows (shortcuts only) or hides; ⇧⌃⌘/ opens with other commands shown. Once open, Shift alone toggles them.
         let base = UInt32(controlKey | cmdKey)
         hotKeys = [
             HotKey(id: 1, keyCode: UInt32(kVK_ANSI_Slash), modifiers: base) { [weak self] in self?.popup.toggle() },

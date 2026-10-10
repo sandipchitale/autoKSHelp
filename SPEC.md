@@ -2,7 +2,7 @@
 
 Develop a menubar applet that generates a keyboard shortcuts popup using the frontmost apps menu. With options alternate actions. So if I hold the Option key down show those actions instead. The display should be a nicely formated light weight popup window that appeares at the screen center. Add search at the top to narrow down the list. Escape should hide the popup. Use Swift/Swift UI.
 
-## Implemented behavior (v0.0.3)
+## Implemented behavior (v0.0.4)
 
 **Popup**
 - Menubar applet (no Dock icon); the menu shows the app name and version, *Show Shortcuts*, *Show Other Commands* (toggle), *Accessibility Settings…* and *Quit*.
@@ -12,14 +12,14 @@ Develop a menubar applet that generates a keyboard shortcuts popup using the fro
 
 **Content**
 - Shortcuts are read from the frontmost app's menu bar through the Accessibility API (permission required).
-- Holding **Option** shows the alternate menu items (e.g. Close All) in place of their base items; an "⌥ Alternates" label (space always reserved) indicates it.
+- Holding **Option** shows the alternate menu items (e.g. Close All) in place of their base items; an always-visible "Hold ⌥ for alternates" label in the header advertises the feature and highlights while Option is held (its size never changes).
 - *Other Commands*: enabled menu commands without a shortcut are listed in a separate section below the shortcuts (off by default; header toggle or menubar item).
 
 **Running commands**
 - Click a row, press Enter (first match), or type the shortcut itself (needs ⌘ or ⌃, or an F-key) to run the command in the frontmost app via its menu item.
 
 **Hotkeys**
-- **⌃⌘/** cycles: shortcuts → shortcuts + other commands → hidden.
+- **⌃⌘/** shows the popup (shortcuts only) or hides it.
 - **⇧⌃⌘/** opens with other commands shown.
 - Once the popup is open, each press of **Shift** alone shows/hides the other commands.
 
