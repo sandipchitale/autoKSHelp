@@ -26,7 +26,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         titleItem.isEnabled = false
         menu.addItem(titleItem)
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Show Shortcuts (⌃⌥⌘/)", action: #selector(show), keyEquivalent: "").target = self
+        menu.addItem(withTitle: "Show Shortcuts (⌃⌘/)", action: #selector(show), keyEquivalent: "").target = self
         otherCommandsItem = NSMenuItem(title: "Show Other Commands", action: #selector(toggleShowOtherCommands), keyEquivalent: "")
         otherCommandsItem.target = self
         otherCommandsItem.state = popup.model.showOtherCommands ? .on : .off
@@ -37,8 +37,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.menu = menu
         menu.delegate = self
 
-        // ⌃⌥⌘/ cycles shortcuts → +other commands → hidden; ⇧⌃⌥⌘/ opens with other commands, then toggles them.
-        let base = UInt32(controlKey | optionKey | cmdKey)
+        // ⌃⌘/ cycles shortcuts → +other commands → hidden; ⇧⌃⌘/ opens with other commands, then toggles them.
+        let base = UInt32(controlKey | cmdKey)
         hotKeys = [
             HotKey(id: 1, keyCode: UInt32(kVK_ANSI_Slash), modifiers: base) { [weak self] in self?.popup.toggle() },
             HotKey(id: 2, keyCode: UInt32(kVK_ANSI_Slash), modifiers: base | UInt32(shiftKey)) { [weak self] in self?.popup.toggleOthers() },

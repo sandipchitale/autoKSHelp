@@ -1,13 +1,13 @@
 # autoKSHelp
 
-A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.1.
+A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.2.
 
 ## Usage
 
 | Action | How |
 | --- | --- |
-| Show / cycle | **⌃⌥⌘/** — shortcuts → shortcuts + other commands → hidden (or menubar icon → *Show Shortcuts*) |
-| Open with other commands, then toggle them | **⇧⌃⌥⌘/** |
+| Show / cycle | **⌃⌘/** — shortcuts → shortcuts + other commands → hidden (or menubar icon → *Show Shortcuts*) |
+| Open with other commands, then toggle them | **⇧⌃⌘/** |
 | Show alternate menu items | Hold **⌥ Option** |
 | Search | Just type (title, menu path or keys) |
 | Run a command | Click a row, press **Enter** (first match), or type its shortcut (needs ⌘ or ⌃, or an F-key) |
@@ -15,6 +15,11 @@ A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, re
 | Move | Drag any empty part of the popup |
 
 The popup has four columns, a fixed height (70% of the screen), light/dark/system appearance buttons, and a header toggle for *Other Commands* — enabled menu items without a shortcut, listed below the shortcuts.
+
+## Changelog
+
+- **0.0.2** — hotkey changed from ⌃⌥⌘/ to **⌃⌘/** (and ⇧⌃⌘/): holding Option as part of the hotkey made the Option alternates show as soon as the popup opened.
+- **0.0.1** — first release.
 
 ## Requirements
 
