@@ -50,14 +50,16 @@ struct ShortcutsView: View {
                 .font(.title3)
                 .focused($focused)
                 .onSubmit { if let first = model.firstShown { model.activate(first) } }
-            // Always visible (a discoverability hint); only its styling changes while Option is held.
-            Text("Hold ⌥ for alternates")
+            // Always visible (a discoverability hint); only its styling changes while alternates are on.
+            Text("Press ⌥ for alternates")
+                .opacity(0)  // sizes the pill to the longer text so it never changes width
+                .overlay(Text(model.optionDown ? "Alternates" : "Press ⌥ for alternates"))
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(model.optionDown ? Color.primary : Color.secondary)
                 .fixedSize()
                 .padding(.horizontal, 8).padding(.vertical, 3)
                 .background(model.optionDown ? Color.accentColor.opacity(0.25) : Color.secondary.opacity(0.1), in: Capsule())
-                .help("Hold the Option key to show alternate actions (e.g. Close All instead of Close)")
+                .help("Press the Option key to toggle alternate actions (e.g. Close All instead of Close)")
             Picker("Appearance", selection: $model.appearance) {
                 ForEach(PopupAppearance.allCases, id: \.self) { a in
                     Image(systemName: a.symbol).help(a.rawValue.capitalized).tag(a)

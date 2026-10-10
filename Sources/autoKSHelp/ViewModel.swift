@@ -20,7 +20,9 @@ final class ViewModel: ObservableObject {
     @Published var items: [ShortcutItem] = []
     @Published var loading = false
     @Published var needsPermission = false
+    /// Whether alternates are shown (latched: each Option press toggles it).
     @Published var optionDown = false
+    private var optionHeld = false
     private(set) var shiftDown = false
     @Published var query = ""
     @Published var size = CGSize(width: 1200, height: 800)
@@ -35,6 +37,12 @@ final class ViewModel: ObservableObject {
 
     var othersShown: Bool { showOtherCommands }
 
+    /// Each Option press while the popup is open toggles alternates (releasing does nothing).
+    func setOption(_ down: Bool) {
+        if down && !optionHeld { optionDown.toggle() }
+        optionHeld = down
+    }
+
     /// Each Shift press while the popup is open toggles "Other Commands" (releasing does nothing).
     func setShift(_ down: Bool) {
         if down && !shiftDown { showOtherCommands.toggle() }
@@ -46,7 +54,8 @@ final class ViewModel: ObservableObject {
 
     func load(app: NSRunningApplication?) {
         query = ""
-        optionDown = NSEvent.modifierFlags.contains(.option)
+        optionHeld = NSEvent.modifierFlags.contains(.option)
+        optionDown = optionHeld  // Option already held at open: start with alternates shown
         // Shift already held at open (e.g. the ⇧ hotkey): start with other commands shown, no spurious toggle.
         shiftDown = NSEvent.modifierFlags.contains(.shift)
         if shiftDown { showOtherCommands = true }

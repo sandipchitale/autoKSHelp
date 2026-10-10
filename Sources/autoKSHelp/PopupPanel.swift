@@ -121,7 +121,7 @@ final class PopupController {
             let opt = e.modifierFlags.contains(.option)
             let shift = e.modifierFlags.contains(.shift)
             Task { @MainActor in
-                self?.model.optionDown = opt
+                self?.model.setOption(opt)
                 self?.model.setShift(shift)
             }
         }

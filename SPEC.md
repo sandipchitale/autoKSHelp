@@ -2,7 +2,7 @@
 
 Develop a menubar applet that generates a keyboard shortcuts popup using the frontmost apps menu. With options alternate actions. So if I hold the Option key down show those actions instead. The display should be a nicely formated light weight popup window that appeares at the screen center. Add search at the top to narrow down the list. Escape should hide the popup. Use Swift/Swift UI.
 
-## Implemented behavior (v0.0.4)
+## Implemented behavior (v0.0.5)
 
 **Popup**
 - Menubar applet (no Dock icon); the menu shows the app name and version, *Show Shortcuts*, *Show Other Commands* (toggle), *Accessibility Settings…* and *Quit*.
@@ -12,7 +12,7 @@ Develop a menubar applet that generates a keyboard shortcuts popup using the fro
 
 **Content**
 - Shortcuts are read from the frontmost app's menu bar through the Accessibility API (permission required).
-- Holding **Option** shows the alternate menu items (e.g. Close All) in place of their base items; an always-visible "Hold ⌥ for alternates" label in the header advertises the feature and highlights while Option is held (its size never changes).
+- Pressing **Option** toggles the alternate menu items (e.g. Close All) in place of their base items; releasing it does nothing, so it need not be held. An always-visible label in the header advertises the feature ("Press ⌥ for alternates") and reads "Alternates", highlighted, when on; its width never changes. (The original spec said to hold Option; it was changed to a toggle on request.)
 - *Other Commands*: enabled menu commands without a shortcut are listed in a separate section below the shortcuts (off by default; header toggle or menubar item).
 
 **Running commands**
@@ -23,7 +23,7 @@ Develop a menubar applet that generates a keyboard shortcuts popup using the fro
 - **⇧⌃⌘/** opens with other commands shown.
 - Once the popup is open, each press of **Shift** alone shows/hides the other commands.
 
-**Note:** the hotkeys deliberately avoid Option, since holding Option selects the alternate menu items and would show them the moment the popup opens.
+**Note:** the hotkeys deliberately avoid Option, since Option toggles the alternate menu items and would switch them on the moment the popup opens.
 
 **Design principle:** the UI must stay stable. Conditional elements reserve their space; layout moves only when the interaction implies it (e.g. expanding an accordion).
 
