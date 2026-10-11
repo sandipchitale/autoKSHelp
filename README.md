@@ -1,6 +1,6 @@
 # autoKSHelp
 
-A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.8.
+A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.9.
 
 ![Screenshot](screenshots/autoKSHelp.png)
 
@@ -30,6 +30,7 @@ The popup has four columns, a fixed height (70% of the screen), light/dark/syste
 
 ## Changelog
 
+- **0.0.9** — fix: an empty "autoKSHelp Settings" window opened at every launch (from a placeholder SwiftUI scene); the app now starts with a plain AppKit entry point and opens no window.
 - **0.0.8** — README: instructions for installing from a release.
 - **0.0.7** — README screenshot; no functional changes.
 - **0.0.6** — Alternates and Other Commands are now toggle buttons in the header, each labelled with its key (⌥ / ⇧); the old state-changing label is gone.
@@ -56,5 +57,5 @@ Signing uses a local certificate ("CmdTab Local Signing" / "autoKSHelp Local Sig
 ## Layout
 
 - `Sources/KSCore` — shortcut model, key/modifier formatting, matching (unit tested)
-- `Sources/autoKSHelp` — app, Accessibility menu reader, popup panel, SwiftUI view, hotkeys
+- `Sources/autoKSHelp` — app (`main.swift` AppKit entry), Accessibility menu reader, popup panel, SwiftUI view, hotkeys
 - `SPEC.md` — original spec plus implemented behavior

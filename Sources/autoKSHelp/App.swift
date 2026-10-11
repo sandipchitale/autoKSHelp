@@ -1,12 +1,6 @@
 import SwiftUI
 import Carbon.HIToolbox
 
-@main
-struct AutoKSHelpApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    var body: some Scene { Settings { EmptyView() } }
-}
-
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!

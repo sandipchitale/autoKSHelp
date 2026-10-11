@@ -2,12 +2,12 @@
 
 Develop a menubar applet that generates a keyboard shortcuts popup using the frontmost apps menu. With options alternate actions. So if I hold the Option key down show those actions instead. The display should be a nicely formated light weight popup window that appeares at the screen center. Add search at the top to narrow down the list. Escape should hide the popup. Use Swift/Swift UI.
 
-## Implemented behavior (v0.0.8)
+## Implemented behavior (v0.0.9)
 
 See `screenshots/autoKSHelp.png` for the popup (4 columns, header toggles, appearance buttons).
 
 **Popup**
-- Menubar applet (no Dock icon); the menu shows the app name and version, *Show Shortcuts*, *Show Other Commands* (toggle), *Accessibility Settings…* and *Quit*.
+- Menubar applet (no Dock icon, no windows at launch — plain AppKit entry point, no SwiftUI app scene); the menu shows the app name and version, *Show Shortcuts*, *Show Other Commands* (toggle), *Accessibility Settings…* and *Quit*.
 - Borderless popup centered on screen, 70% of the usable screen height and at most 1600 px wide, draggable by any non-interactive spot. It does not steal focus from the frontmost app, and hides on Escape or when it loses focus.
 - Fixed 4-column layout with the shortcut right next to the action name, grouped by top-level menu. The height never changes while the popup is open; the vertical scrollbar space is always reserved so the layout does not shift.
 - Search field at the top (focused on open) filters by title, menu path or keys. Appearance buttons: Light (default, white), Dark, System.
