@@ -118,24 +118,41 @@ final class PopupController {
     private func installMonitors() {
         removeMonitors()
         let update: (NSEvent) -> Void = { [weak self] e in
-            let opt = e.modifierFlags.contains(.option)
-            let shift = e.modifierFlags.contains(.shift)
-            Task { @MainActor in
-                self?.model.setOption(opt)
-                self?.model.setShift(shift)
-            }
+            let flags = e.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            Task { @MainActor in self?.model.modifiersChanged(flags) }
         }
         if let m = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged, handler: { e in update(e); return e }) {
             monitors.append(m)
         }
         if let m = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] e in
-            MainActor.assumeIsolated { self?.model.handleKey(e) == true ? nil : e }
+            MainActor.assumeIsolated {
+                guard let self else { return e }
+                self.model.keyPressed()
+                if self.handleNavigation(e) { return nil }
+                return self.model.handleKey(e) ? nil : e
+            }
         }) {
             monitors.append(m)
         }
         if let m = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged, handler: update) {
             monitors.append(m)
         }
+    }
+
+    /// Arrow keys and Tab / ⇧Tab move the selection. Left/Right only navigate while the search box is empty
+    /// (otherwise they move the text cursor).
+    private func handleNavigation(_ e: NSEvent) -> Bool {
+        let f = e.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        guard f.isDisjoint(with: [.command, .control, .option]) else { return false }
+        switch Int(e.keyCode) {
+        case 125: model.move(.down)
+        case 126: model.move(.up)
+        case 123 where model.query.isEmpty: model.move(.left)
+        case 124 where model.query.isEmpty: model.move(.right)
+        case 48: model.move(f.contains(.shift) ? .previous : .next)
+        default: return false
+        }
+        return true
     }
 
     private func removeMonitors() {

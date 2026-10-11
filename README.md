@@ -1,6 +1,6 @@
 # autoKSHelp
 
-A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.9.
+A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.10.
 
 ![Screenshot](screenshots/autoKSHelp.png)
 
@@ -19,17 +19,21 @@ To update, quit the app from its menubar menu, replace it in `/Applications` and
 | --- | --- |
 | Show / hide | **⌃⌘/** (or menubar icon → *Show Shortcuts*) |
 | Open with other commands shown | **⇧⌃⌘/** |
-| Show / hide other commands (popup open) | Press **⇧ Shift** (releasing does nothing) or click the **⇧ Other Commands** header button |
-| Show / hide alternate menu items (popup open) | Press **⌥ Option** (a toggle, like Shift) or click the **⌥ Alternates** header button |
+| Show / hide other commands (popup open) | Tap **⇧ Shift** on its own, or click the **⇧ Other Commands** header button |
+| Show / hide alternate menu items (popup open) | Tap **⌥ Option** on its own, or click the **⌥ Alternates** header button |
+| Navigate the list | **↑ ↓** within a column, **← →** between columns (while the search box is empty), **Tab** / **⇧Tab** next / previous |
 | Search | Just type (title, menu path or keys) |
-| Run a command | Click a row, press **Enter** (first match), or type its shortcut (needs ⌘ or ⌃, or an F-key) |
+| Run a command | Click a row, press **Enter** (the highlighted row — the first one by default), or type its shortcut (needs ⌘ or ⌃, or an F-key) |
 | Hide | **Esc** or click elsewhere |
 | Move | Drag any empty part of the popup |
 
 The popup has four columns, a fixed height (70% of the screen), light/dark/system appearance buttons, and two header toggle buttons, **⌥ Alternates** and **⇧ Other Commands**, whose labels show the key that toggles them. *Other Commands* are enabled menu items without a shortcut, listed below the shortcuts.
 
+Shift and Option toggle only when tapped *exclusively* (pressed and released alone, with no other key or modifier in between), so ⇧Tab or ⌥⌘W never toggle anything. The toggle happens on release.
+
 ## Changelog
 
+- **0.0.10** — keyboard navigation (arrows, Tab / ⇧Tab, Enter runs the highlighted row, hover also highlights); Shift and Option toggle only when tapped exclusively (on release).
 - **0.0.9** — fix: an empty "autoKSHelp Settings" window opened at every launch (from a placeholder SwiftUI scene); the app now starts with a plain AppKit entry point and opens no window.
 - **0.0.8** — README: instructions for installing from a release.
 - **0.0.7** — README screenshot; no functional changes.

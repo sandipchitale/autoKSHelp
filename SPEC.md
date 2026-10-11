@@ -2,7 +2,7 @@
 
 Develop a menubar applet that generates a keyboard shortcuts popup using the frontmost apps menu. With options alternate actions. So if I hold the Option key down show those actions instead. The display should be a nicely formated light weight popup window that appeares at the screen center. Add search at the top to narrow down the list. Escape should hide the popup. Use Swift/Swift UI.
 
-## Implemented behavior (v0.0.9)
+## Implemented behavior (v0.0.10)
 
 See `screenshots/autoKSHelp.png` for the popup (4 columns, header toggles, appearance buttons).
 
@@ -14,16 +14,22 @@ See `screenshots/autoKSHelp.png` for the popup (4 columns, header toggles, appea
 
 **Content**
 - Shortcuts are read from the frontmost app's menu bar through the Accessibility API (permission required).
-- Pressing **Option** toggles the alternate menu items (e.g. Close All) in place of their base items; releasing it does nothing, so it need not be held. The header has a toggle button **⌥ Alternates** (clickable too) that shows the state; its label is constant so the layout never shifts. (The original spec said to hold Option; it was changed to a toggle on request.)
-- *Other Commands*: enabled menu commands without a shortcut are listed in a separate section below the shortcuts (off by default; toggled by pressing Shift, the **⇧ Other Commands** header button, or the menubar item).
+- Tapping **Option** on its own toggles the alternate menu items (e.g. Close All) in place of their base items, so it need not be held. The header has a toggle button **⌥ Alternates** (clickable too) that shows the state; its label is constant so the layout never shifts. (The original spec said to hold Option; it was changed to a toggle on request.)
+- *Other Commands*: enabled menu commands without a shortcut are listed in a separate section below the shortcuts (off by default; toggled by tapping Shift on its own, the **⇧ Other Commands** header button, or the menubar item).
+
+**Keyboard navigation**
+- A row is always highlighted (the first one by default; hovering also selects). **↑/↓** move within a column, **←/→** move between columns (only while the search box is empty, otherwise they move the text cursor), **Tab/⇧Tab** step forward/back through all rows, wrapping around. The list scrolls to keep the selected row visible.
+
+**Modifier taps**
+- Shift (Other Commands) and Option (Alternates) toggle only when tapped *exclusively*: pressed and released alone, with no other key or modifier in between. ⇧Tab, ⌥⌘W or Shift+Option together never toggle. The toggle fires on release.
 
 **Running commands**
-- Click a row, press Enter (first match), or type the shortcut itself (needs ⌘ or ⌃, or an F-key) to run the command in the frontmost app via its menu item.
+- Click a row, press Enter (the highlighted row), or type the shortcut itself (needs ⌘ or ⌃, or an F-key) to run the command in the frontmost app via its menu item.
 
 **Hotkeys**
 - **⌃⌘/** shows the popup (shortcuts only) or hides it.
 - **⇧⌃⌘/** opens with other commands shown.
-- Once the popup is open, each press of **Shift** alone shows/hides the other commands.
+- Once the popup is open, each tap of **Shift** alone shows/hides the other commands.
 
 **Note:** the hotkeys deliberately avoid Option, since Option toggles the alternate menu items and would switch them on the moment the popup opens.
 

@@ -23,7 +23,13 @@ final class ViewModel: ObservableObject {
     /// Whether alternates are shown (latched: each Option press toggles it).
     @Published var optionDown = false
     private var optionHeld = false
+    private var optionPending = false
     private(set) var shiftDown = false
+    private var shiftPending = false
+    /// Keyboard/hover selection (nil = first item).
+    @Published var selection: UUID?
+    /// Set by keyboard navigation only, so the view scrolls to it (hover must not scroll).
+    @Published var scrollTarget: UUID?
     @Published var query = ""
     @Published var size = CGSize(width: 1200, height: 800)
 
@@ -37,17 +43,24 @@ final class ViewModel: ObservableObject {
 
     var othersShown: Bool { showOtherCommands }
 
-    /// Each Option press while the popup is open toggles alternates (releasing does nothing).
-    func setOption(_ down: Bool) {
-        if down && !optionHeld { optionDown.toggle() }
-        optionHeld = down
+    /// Option / Shift toggle only when tapped *exclusively*: pressed and released alone, with no other
+    /// key or modifier in between (so ⇧Tab, ⌥⌘W or Shift+Option together don't toggle anything).
+    func modifiersChanged(_ f: NSEvent.ModifierFlags) {
+        let opt = f.contains(.option), shift = f.contains(.shift)
+        let count = [opt, shift, f.contains(.command), f.contains(.control)].filter { $0 }.count
+        if count > 1 { optionPending = false; shiftPending = false }
+        if opt && count == 1 && !optionHeld { optionPending = true }
+        if shift && count == 1 && !shiftDown { shiftPending = true }
+        if !opt && optionHeld && optionPending { optionDown.toggle() }
+        if !shift && shiftDown && shiftPending { showOtherCommands.toggle() }
+        if !opt { optionPending = false }
+        if !shift { shiftPending = false }
+        optionHeld = opt
+        shiftDown = shift
     }
 
-    /// Each Shift press while the popup is open toggles "Other Commands" (releasing does nothing).
-    func setShift(_ down: Bool) {
-        if down && !shiftDown { showOtherCommands.toggle() }
-        shiftDown = down
-    }
+    /// Any key press cancels a pending Option/Shift tap.
+    func keyPressed() { optionPending = false; shiftPending = false }
 
     private var target: NSRunningApplication?
     var onHide: () -> Void = {}
@@ -60,6 +73,7 @@ final class ViewModel: ObservableObject {
         shiftDown = NSEvent.modifierFlags.contains(.shift)
         if shiftDown { showOtherCommands = true }
         items = []
+        selection = nil
         guard MenuReader.isTrusted(prompt: true) else { needsPermission = true; return }
         needsPermission = false
         target = app
@@ -124,9 +138,88 @@ final class ViewModel: ObservableObject {
 
     var sections: (withKeys: [Group], others: [Group]) { sections(optionDown: optionDown, query: query) }
 
-    /// First item in display order (for Enter).
-    var firstShown: ShortcutItem? {
-        let s = sections
-        return s.withKeys.first?.items.first ?? s.others.first?.items.first
+    enum Entry: Identifiable {
+        case header(String, Int)
+        case row(ShortcutItem)
+        case divider(Int)
+        var id: String {
+            switch self {
+            case .header(let m, let n): return "h\(n)-\(m)"
+            case .row(let i): return i.id.uuidString
+            case .divider(let n): return "d\(n)"
+            }
+        }
+    }
+
+    static let columnCount = 4
+
+    /// Entries flowed into columns (shortcut groups first, then other commands).
+    var columns: [[Entry]] {
+        let sec = sections
+        var entries: [Entry] = []
+        for g in sec.withKeys {
+            entries.append(.header(g.menu, entries.count))
+            entries += g.items.map { .row($0) }
+        }
+        if !sec.others.isEmpty {
+            entries.append(.divider(entries.count))
+            for g in sec.others {
+                entries.append(.header(g.menu, entries.count))
+                entries += g.items.map { .row($0) }
+            }
+        }
+        let cols = Self.columnCount
+        let chunk = max(1, Int((Double(entries.count) / Double(cols)).rounded(.up)))
+        var result: [[Entry]] = []
+        var i = 0
+        while i < entries.count || result.count < cols {
+            if i >= entries.count { result.append([]); continue }
+            var col = Array(entries[i..<min(i + chunk, entries.count)])
+            if case .row(let first)? = col.first { col.insert(.header(first.menu + " (cont.)", i), at: 0) }
+            result.append(col)
+            i += chunk
+        }
+        return result
+    }
+
+    private func rows(_ columns: [[Entry]]) -> [[ShortcutItem]] {
+        columns.map { $0.compactMap { if case .row(let i) = $0 { return i } else { return nil } } }
+    }
+
+    /// The highlighted item: the selection if still visible, else the first item.
+    var effectiveSelection: ShortcutItem? {
+        let flat = rows(columns).flatMap { $0 }
+        return flat.first { $0.id == selection } ?? flat.first
+    }
+
+    /// First item in display order.
+    var firstShown: ShortcutItem? { effectiveSelection }
+
+    func activateSelected() { if let item = effectiveSelection { activate(item) } }
+
+    enum Direction { case up, down, left, right, next, previous }
+
+    func move(_ d: Direction) {
+        let cols = rows(columns)
+        let flat = cols.flatMap { $0 }
+        guard !flat.isEmpty, let cur = effectiveSelection else { return }
+        func select(_ item: ShortcutItem) { selection = item.id; scrollTarget = item.id }
+        if d == .next || d == .previous {
+            let i = flat.firstIndex { $0.id == cur.id } ?? 0
+            select(flat[(i + (d == .next ? 1 : flat.count - 1)) % flat.count])
+            return
+        }
+        guard let c = cols.firstIndex(where: { $0.contains { $0.id == cur.id } }),
+              let r = cols[c].firstIndex(where: { $0.id == cur.id }) else { return }
+        switch d {
+        case .up: select(cols[c][max(0, r - 1)])
+        case .down: select(cols[c][min(cols[c].count - 1, r + 1)])
+        case .left, .right:
+            let step = d == .left ? -1 : 1
+            var n = c + step
+            while cols.indices.contains(n), cols[n].isEmpty { n += step }
+            if cols.indices.contains(n) { select(cols[n][min(r, cols[n].count - 1)]) }
+        default: break
+        }
     }
 }

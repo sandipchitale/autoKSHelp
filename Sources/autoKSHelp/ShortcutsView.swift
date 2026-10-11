@@ -20,7 +20,6 @@ struct ReservedScroller: NSViewRepresentable {
 struct ShortcutsView: View {
     @ObservedObject var model: ViewModel
     @FocusState private var focused: Bool
-    @State private var hovered: UUID?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -49,7 +48,7 @@ struct ShortcutsView: View {
                 .textFieldStyle(.plain)
                 .font(.title3)
                 .focused($focused)
-                .onSubmit { if let first = model.firstShown { model.activate(first) } }
+                .onSubmit { model.activateSelected() }
             // Constant labels (the key is part of the text), so the header never shifts.
             Toggle(isOn: $model.optionDown) { Text("⌥ Alternates") }
                 .toggleStyle(.button)
@@ -86,49 +85,13 @@ struct ShortcutsView: View {
         }
     }
 
-    private enum Entry: Identifiable {
-        case header(String, Int)
-        case row(ShortcutItem)
-        case divider(Int)
-        var id: String {
-            switch self {
-            case .header(let m, let n): return "h\(n)-\(m)"
-            case .row(let i): return i.id.uuidString
-            case .divider(let n): return "d\(n)"
-            }
-        }
-    }
-
     private let rowH: CGFloat = 24
 
 
-    /// Flows entries into as few columns as fit the panel height, so nothing needs scrolling.
     private var columnsView: some View {
-        let sec = model.sections
-        var entries: [Entry] = []
-        for g in sec.withKeys {
-            entries.append(.header(g.menu, entries.count))
-            entries += g.items.map { .row($0) }
-        }
-        if !sec.others.isEmpty {
-            entries.append(.divider(entries.count))
-            for g in sec.others {
-                entries.append(.header(g.menu, entries.count))
-                entries += g.items.map { .row($0) }
-            }
-        }
-        let cols = 4
-        let chunk = max(1, Int((Double(entries.count) / Double(cols)).rounded(.up)))
-        var columns: [[Entry]] = []
-        var i = 0
-        while i < entries.count || columns.count < cols {
-            if i >= entries.count { columns.append([]); continue }
-            var col = Array(entries[i..<min(i + chunk, entries.count)])
-            if case .row(let first)? = col.first { col.insert(.header(first.menu + " (cont.)", i), at: 0) }
-            columns.append(col)
-            i += chunk
-        }
-        return ScrollView(.vertical) { HStack(alignment: .top, spacing: 0) {
+        let columns = model.columns
+        let selected = model.effectiveSelection?.id
+        return ScrollViewReader { proxy in ScrollView(.vertical) { HStack(alignment: .top, spacing: 0) {
             ForEach(Array(columns.enumerated()), id: \.offset) { idx, col in
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(col) { e in
@@ -139,7 +102,7 @@ struct ShortcutsView: View {
                                 .frame(height: rowH, alignment: .bottomLeading)
                                 .padding(.horizontal, 12)
                         case .row(let item):
-                            row(item)
+                            row(item, selected: item.id == selected)
                         case .divider:
                             Text("OTHER COMMANDS (NO SHORTCUT)")
                                 .font(.caption.weight(.heavy)).foregroundStyle(Color.accentColor)
@@ -156,9 +119,11 @@ struct ShortcutsView: View {
         .padding(.vertical, 4)
         .background(ReservedScroller())
         }
+        .onChange(of: model.scrollTarget) { id in if let id { proxy.scrollTo(id) } }
+        }
     }
 
-    private func row(_ item: ShortcutItem) -> some View {
+    private func row(_ item: ShortcutItem, selected: Bool) -> some View {
         HStack(spacing: 6) {
             Text(item.title).font(.system(size: 13)).lineLimit(1).truncationMode(.tail)
             Spacer(minLength: 6)
@@ -171,9 +136,10 @@ struct ShortcutsView: View {
         }
         .frame(height: rowH)
         .padding(.horizontal, 12)
-        .background(hovered == item.id ? Color.accentColor.opacity(0.15) : .clear)
+        .background(selected ? Color.accentColor.opacity(0.22) : .clear)
         .contentShape(Rectangle())
-        .onHover { hovered = $0 ? item.id : (hovered == item.id ? nil : hovered) }
+        .id(item.id)
+        .onHover { if $0 { model.selection = item.id } }
         .onTapGesture { model.activate(item) }
     }
 
