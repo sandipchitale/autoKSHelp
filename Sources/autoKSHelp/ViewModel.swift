@@ -1,6 +1,8 @@
 import AppKit
 import KSCore
 
+enum ExportKind { case pdf, html }
+
 enum PopupAppearance: String, CaseIterable {
     case system, light, dark
     var symbol: String { self == .light ? "sun.max" : self == .dark ? "moon" : "circle.lefthalf.filled" }
@@ -64,6 +66,7 @@ final class ViewModel: ObservableObject {
 
     private var target: NSRunningApplication?
     var onHide: () -> Void = {}
+    var onExport: (ExportKind) -> Void = { _ in }
 
     func load(app: NSRunningApplication?) {
         query = ""
@@ -190,6 +193,59 @@ final class ViewModel: ObservableObject {
     var effectiveSelection: ShortcutItem? {
         let flat = rows(columns).flatMap { $0 }
         return flat.first { $0.id == selection } ?? flat.first
+    }
+
+    /// The popup's current state (filter, Other Commands, appearance) as an export snapshot. Both variants are
+    /// exported at once: each item's Option alternate is listed right below it.
+    func snapshot(dark: Bool) -> ExportSnapshot {
+        func keys(_ i: ShortcutItem) -> [String] { ShortcutFormat.modifierGlyphs(i.modifiers).map(String.init) + [i.key] }
+        func matches(_ i: ShortcutItem) -> Bool { !ShortcutFormat.filter([i], query: query).isEmpty }
+        let bases = ShortcutFormat.visible(items, optionDown: false).filter {
+            matches($0) || ($0.alternate.map(matches) ?? false)
+        }
+        func entries(_ groups: [Group]) -> [ExportEntry] {
+            groups.flatMap { g in
+                [ExportEntry.header(g.menu)] + g.items.flatMap { i -> [ExportEntry] in
+                    guard i.hasShortcut else {
+                        return [.row(title: i.title, keys: [], hint: i.path.components(separatedBy: " › ").dropLast().joined(separator: " › "))]
+                    }
+                    var out: [ExportEntry] = [.row(title: i.title, keys: keys(i), hint: nil)]
+                    if let a = i.alternate { out.append(.alt(title: a.title, keys: keys(a))) }
+                    return out
+                }
+            }
+        }
+        var all = entries(group(bases.filter(\.hasShortcut)))
+        if othersShown {
+            let others = group(bases.filter { !$0.hasShortcut })
+            if !others.isEmpty { all += [.divider("Other commands (no shortcut)")] + entries(others) }
+        }
+        let hasAlts = all.contains { if case .alt = $0 { return true } else { return false } }
+        return ExportSnapshot(appName: appName.isEmpty ? "App" : appName, entries: all, filter: query,
+                              alternates: hasAlts, others: othersShown, dark: dark,
+                              iconPNG: appIcon.flatMap { Self.png($0, side: 128) })
+    }
+
+    /// Renders an icon to a square PNG (for embedding in exports).
+    private static func png(_ image: NSImage, side: Int) -> Data? {
+        guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: side, pixelsHigh: side, bitsPerSample: 8,
+                                         samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
+                                         colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0) else { return nil }
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
+        image.draw(in: NSRect(x: 0, y: 0, width: side, height: side))
+        NSGraphicsContext.restoreGraphicsState()
+        return rep.representation(using: .png, properties: [:])
+    }
+
+    private func group(_ list: [ShortcutItem]) -> [Group] {
+        var order: [String] = []
+        var dict: [String: [ShortcutItem]] = [:]
+        for i in list {
+            if dict[i.menu] == nil { order.append(i.menu) }
+            dict[i.menu, default: []].append(i)
+        }
+        return order.map { ($0, dict[$0]!) }
     }
 
     /// First item in display order.

@@ -1,6 +1,6 @@
 # autoKSHelp
 
-A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.10.
+A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.11.
 
 ![Screenshot](screenshots/autoKSHelp.png)
 
@@ -24,6 +24,7 @@ To update, quit the app from its menubar menu, replace it in `/Applications` and
 | Navigate the list | **↑ ↓** within a column, **← →** between columns (while the search box is empty), **Tab** / **⇧Tab** next / previous |
 | Search | Just type (title, menu path or keys) |
 | Run a command | Click a row, press **Enter** (the highlighted row — the first one by default), or type its shortcut (needs ⌘ or ⌃, or an F-key) |
+| Save the current view | Header buttons **PDF** (document icon) and **HTML** (`</>` icon) — landscape, see below |
 | Hide | **Esc** or click elsewhere |
 | Move | Drag any empty part of the popup |
 
@@ -31,8 +32,18 @@ The popup has four columns, a fixed height (70% of the screen), light/dark/syste
 
 Shift and Option toggle only when tapped *exclusively* (pressed and released alone, with no other key or modifier in between), so ⇧Tab or ⌥⌘W never toggle anything. The toggle happens on release.
 
+## Saving as PDF / HTML
+
+The two header buttons save exactly what the popup currently shows — search filter, *Other Commands*, and light/dark appearance — through a standard save dialog (defaults to Downloads).
+
+- **Landscape**, 4 columns, with the app's icon and name, item count and date in the header.
+- **Both variants at once:** each item's Option alternate is listed right below it (indented, orange, with its ⌥ key) regardless of whether Alternates is toggled on.
+- **PDF** is paginated (A4 in metric locales, US Letter otherwise) with vector text; groups continue on the next column/page with a "(cont.)" header.
+- **HTML** is a single self-contained file (the icon is embedded) that also prints landscape.
+
 ## Changelog
 
+- **0.0.11** — save the current view as landscape PDF or HTML (header buttons): includes the app icon, shows Alternates inline below their items, matches the popup's appearance.
 - **0.0.10** — keyboard navigation (arrows, Tab / ⇧Tab, Enter runs the highlighted row, hover also highlights); Shift and Option toggle only when tapped exclusively (on release).
 - **0.0.9** — fix: an empty "autoKSHelp Settings" window opened at every launch (from a placeholder SwiftUI scene); the app now starts with a plain AppKit entry point and opens no window.
 - **0.0.8** — README: instructions for installing from a release.
@@ -60,6 +71,6 @@ Signing uses a local certificate ("CmdTab Local Signing" / "autoKSHelp Local Sig
 
 ## Layout
 
-- `Sources/KSCore` — shortcut model, key/modifier formatting, matching (unit tested)
+- `Sources/KSCore` — shortcut model, key/modifier formatting, matching, PDF/HTML export layout and rendering (unit tested)
 - `Sources/autoKSHelp` — app (`main.swift` AppKit entry), Accessibility menu reader, popup panel, SwiftUI view, hotkeys
 - `SPEC.md` — original spec plus implemented behavior

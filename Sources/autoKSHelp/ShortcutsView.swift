@@ -58,6 +58,12 @@ struct ShortcutsView: View {
                 .toggleStyle(.button)
                 .help(model.othersShown ? "Showing commands without shortcuts (press ⇧ Shift or click to hide)"
                                         : "Press ⇧ Shift or click to show commands without shortcuts")
+            Button { model.onExport(.pdf) } label: { Image(systemName: "doc.richtext") }
+                .disabled(model.items.isEmpty)
+                .help("Save the current view as a landscape PDF")
+            Button { model.onExport(.html) } label: { Image(systemName: "chevron.left.forwardslash.chevron.right") }
+                .disabled(model.items.isEmpty)
+                .help("Save the current view as a landscape HTML file")
             Picker("Appearance", selection: $model.appearance) {
                 ForEach(PopupAppearance.allCases, id: \.self) { a in
                     Image(systemName: a.symbol).help(a.rawValue.capitalized).tag(a)

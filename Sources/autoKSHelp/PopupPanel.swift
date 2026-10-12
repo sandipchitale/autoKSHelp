@@ -1,9 +1,13 @@
 import AppKit
 import SwiftUI
 import Combine
+import UniformTypeIdentifiers
+import KSCore
 
 final class PopupPanel: NSPanel {
     var onCancel: () -> Void = {}
+    /// True while a save dialog is up, so losing key status doesn't hide the popup.
+    var suspendHide = false
 
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
@@ -35,7 +39,7 @@ final class PopupPanel: NSPanel {
         super.sendEvent(event)
     }
 
-    override func resignKey() { super.resignKey(); onCancel() }
+    override func resignKey() { super.resignKey(); if !suspendHide { onCancel() } }
 }
 
 @MainActor
@@ -68,6 +72,7 @@ final class PopupController {
         }
         panel.onCancel = { [weak self] in self?.hide() }
         model.onHide = { [weak self] in self?.hide() }
+        model.onExport = { [weak self] kind in self?.export(kind) }
     }
 
     var isVisible: Bool { panel.isVisible }
@@ -109,6 +114,42 @@ final class PopupController {
         panel.setFrameOrigin(NSPoint(x: f.midX - size.width / 2, y: f.midY - size.height / 2))
     }
 
+    /// Saves the popup's current state as landscape PDF or HTML via a save dialog.
+    private func export(_ kind: ExportKind) {
+        let dark: Bool
+        switch model.appearance {
+        case .dark: dark = true
+        case .light: dark = false
+        case .system: dark = NSApp.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        }
+        let snapshot = model.snapshot(dark: dark)
+        let ext = kind == .pdf ? "pdf" : "html"
+        panel.suspendHide = true
+        NSApp.activate(ignoringOtherApps: true)
+        let sp = NSSavePanel()
+        sp.allowedContentTypes = [kind == .pdf ? .pdf : .html]
+        sp.nameFieldStringValue = "\(snapshot.appName) keyboard shortcuts.\(ext)"
+        sp.directoryURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first
+        sp.canCreateDirectories = true
+        sp.level = .modalPanel
+        sp.begin { [weak self] response in
+            MainActor.assumeIsolated {
+                if response == .OK, let url = sp.url {
+                    do {
+                        switch kind {
+                        case .pdf: try PDFExporter.write(snapshot, to: url)
+                        case .html: try ExportHTML.render(snapshot).write(to: url, atomically: true, encoding: .utf8)
+                        }
+                    } catch {
+                        NSAlert(error: error).runModal()
+                    }
+                }
+                self?.panel.suspendHide = false
+                self?.panel.makeKeyAndOrderFront(nil)
+            }
+        }
+    }
+
     func hide() {
         guard panel.isVisible else { return }
         removeMonitors()
@@ -118,6 +159,7 @@ final class PopupController {
     private func installMonitors() {
         removeMonitors()
         let update: (NSEvent) -> Void = { [weak self] e in
+            if let w = e.window, w !== self?.panel { return }
             let flags = e.modifierFlags.intersection(.deviceIndependentFlagsMask)
             Task { @MainActor in self?.model.modifiersChanged(flags) }
         }
@@ -126,7 +168,7 @@ final class PopupController {
         }
         if let m = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] e in
             MainActor.assumeIsolated {
-                guard let self else { return e }
+                guard let self, e.window === self.panel else { return e }
                 self.model.keyPressed()
                 if self.handleNavigation(e) { return nil }
                 return self.model.handleKey(e) ? nil : e
