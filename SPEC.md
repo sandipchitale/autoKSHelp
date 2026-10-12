@@ -2,7 +2,7 @@
 
 Develop a menubar applet that generates a keyboard shortcuts popup using the frontmost apps menu. With options alternate actions. So if I hold the Option key down show those actions instead. The display should be a nicely formated light weight popup window that appeares at the screen center. Add search at the top to narrow down the list. Escape should hide the popup. Use Swift/Swift UI.
 
-## Implemented behavior (v0.0.12)
+## Implemented behavior (v0.0.13)
 
 See `screenshots/autoKSHelp.png` (light) and `screenshots/autoKSHelp-alternates.png` (dark, Alternates on) for the popup: 4 columns, header toggles, export and appearance buttons.
 
@@ -13,7 +13,7 @@ See `screenshots/autoKSHelp.png` (light) and `screenshots/autoKSHelp-alternates.
 - Search field at the top (focused on open) filters by title, menu path or keys. Appearance buttons: Light (default, white), Dark, System.
 
 **Content**
-- Shortcuts are read from the frontmost app's menu bar through the Accessibility API (permission required).
+- Shortcuts are read from the frontmost app's menu bar through the Accessibility API (permission required). Arrow and function keys, which menus report as private-use Unicode characters (U+F700…), are translated to symbols (↑ ↓ ← →, F1–F35, ⌦, ⇞ …) so no key renders as a missing-glyph box, and so typed shortcuts match menu shortcuts.
 - Tapping **Option** on its own toggles the alternate menu items (e.g. Close All) in place of their base items, so it need not be held. The header has a toggle button **⌥ Alternates** (clickable too) that shows the state; its label is constant so the layout never shifts. (The original spec said to hold Option; it was changed to a toggle on request.)
 - *Other Commands*: enabled menu commands without a shortcut are listed in a separate section below the shortcuts (off by default; toggled by tapping Shift on its own, the **⇧ Other Commands** header button, or the menubar item).
 

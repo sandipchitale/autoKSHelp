@@ -26,6 +26,17 @@ final class KSCoreTests: XCTestCase {
         XCTAssertEqual(ShortcutFormat.keyName(char: "a", virtualKey: nil), "A")
     }
 
+    func testFunctionKeyCharsAreNotShownAsTofu() {
+        XCTAssertEqual(ShortcutFormat.keyName(char: "\u{F70B}", virtualKey: nil), "F8")     // Next Problem
+        XCTAssertEqual(ShortcutFormat.keyName(char: "\u{F70F}", virtualKey: nil), "F12")    // Go to Definition
+        XCTAssertEqual(ShortcutFormat.keyName(char: "\u{F703}", virtualKey: 124), "→")      // Next Editor
+        XCTAssertEqual(ShortcutFormat.keyName(char: "\u{F702}", virtualKey: nil), "←")
+        XCTAssertEqual(ShortcutFormat.keyName(char: "\u{F8FF}", virtualKey: 36), "↩")       // unknown PUA -> key code
+        XCTAssertNil(ShortcutFormat.keyName(char: "\u{F8FF}", virtualKey: nil))
+        // typed key and menu key now agree, so typing the shortcut matches the item
+        XCTAssertEqual(ShortcutFormat.eventKey(chars: "\u{F70B}", keyCode: 100), "F8")
+    }
+
     func testTypedShortcutMatch() {
         let items = ShortcutFormat.linkAlternates([item("Close", "W", 0), item("Close All", "W", 2)])
         XCTAssertEqual(ShortcutFormat.match(items, modifiers: 2, key: "W")?.title, "Close All")

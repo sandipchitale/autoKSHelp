@@ -43,8 +43,21 @@ public enum ShortcutFormat {
         106: "F16", 64: "F17", 79: "F18", 80: "F19", 90: "F20",
     ]
 
+    /// Menus report arrows and F-keys as private-use "function key" characters (U+F700…), which have no glyph
+    /// and render as a "?" box. This maps them to proper symbols.
+    static let functionKeyChars: [UInt32: String] = {
+        var m: [UInt32: String] = [0xF700: "↑", 0xF701: "↓", 0xF702: "←", 0xF703: "→",
+                                   0xF727: "Insert", 0xF728: "⌦", 0xF729: "↖", 0xF72B: "↘", 0xF72C: "⇞", 0xF72D: "⇟",
+                                   0xF72E: "PrtSc", 0xF72F: "ScrLk", 0xF730: "Pause"]
+        for n in 1...35 { m[UInt32(0xF704 + n - 1)] = "F\(n)" }
+        return m
+    }()
+
     /// Returns the display string for the key part, or nil if there is none.
     public static func keyName(char: String?, virtualKey: Int?) -> String? {
+        if let c = char, c.unicodeScalars.count == 1, let u = c.unicodeScalars.first, (0xF700...0xF8FF).contains(u.value) {
+            return functionKeyChars[u.value] ?? virtualKey.flatMap { virtualKeys[$0] }
+        }
         if let c = char, !c.isEmpty, c != " " || virtualKey == nil {
             return c == " " ? "Space" : c.uppercased()
         }

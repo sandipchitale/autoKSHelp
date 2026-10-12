@@ -1,6 +1,6 @@
 # autoKSHelp
 
-A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.12.
+A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.13.
 
 ![Auto Keyboard Shortcuts](screenshots/autoKSHelp.png)
 ![Auto Keyboard Shortcuts with Alternates](screenshots/autoKSHelp-alternates.png)
@@ -44,6 +44,7 @@ The two header buttons save exactly what the popup currently shows — search fi
 
 ## Changelog
 
+- **0.0.13** — fix: shortcuts using arrow keys or F-keys (e.g. F8, ⌥⌘→) showed a "?" box instead of the key; they now show ↑ ↓ ← → and F1–F35, and typing such a shortcut in the popup now runs it.
 - **0.0.12** — README: light and dark (Alternates on) screenshots; no functional changes.
 - **0.0.11** — save the current view as landscape PDF or HTML (header buttons): includes the app icon, shows Alternates inline below their items, matches the popup's appearance.
 - **0.0.10** — keyboard navigation (arrows, Tab / ⇧Tab, Enter runs the highlighted row, hover also highlights); Shift and Option toggle only when tapped exclusively (on release).
