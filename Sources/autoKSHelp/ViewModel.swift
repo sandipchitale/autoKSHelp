@@ -130,7 +130,16 @@ final class ViewModel: ObservableObject {
 
     /// Items grouped by top-level menu: those with shortcuts first, then the rest.
     func sections(optionDown: Bool, query: String) -> (withKeys: [Group], others: [Group]) {
-        let shown = ShortcutFormat.filter(ShortcutFormat.visible(items, optionDown: optionDown), query: query)
+        // Alternates are listed inline, right below the item they replace (as in the exports).
+        let bases = ShortcutFormat.visible(items, optionDown: false)
+        let matched = bases.filter { b in
+            !ShortcutFormat.filter([b], query: query).isEmpty
+                || (optionDown && b.alternate.map { !ShortcutFormat.filter([$0], query: query).isEmpty } ?? false)
+        }
+        let shown = matched.flatMap { b -> [ShortcutItem] in
+            if optionDown, let a = b.alternate { return [b, a] }
+            return [b]
+        }
         func group(_ list: [ShortcutItem]) -> [Group] {
             var order: [String] = []
             var dict: [String: [ShortcutItem]] = [:]

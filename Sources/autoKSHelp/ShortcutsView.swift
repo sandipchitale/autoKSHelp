@@ -140,6 +140,8 @@ struct ShortcutsView: View {
     private func row(_ item: ShortcutItem, selected: Bool) -> some View {
         HStack(spacing: 6) {
             Text(item.title).font(.system(size: 13)).lineLimit(1).truncationMode(.tail)
+                .foregroundStyle(item.isAlternate ? Color.accentColor : Color.primary)
+                .padding(.leading, item.isAlternate ? 14 : 0)
             Spacer(minLength: 6)
             if item.hasShortcut {
                 keycaps(item)
@@ -164,6 +166,7 @@ struct ShortcutsView: View {
                 Text(g)
                     .font(.system(size: 11, weight: .medium, design: .rounded))
                     .frame(minWidth: 18).padding(.horizontal, 2).padding(.vertical, 1)
+                    .foregroundStyle(item.isAlternate ? Color.accentColor : Color.primary)
                     .background(.quaternary, in: RoundedRectangle(cornerRadius: 5))
             }
         }

@@ -1,6 +1,6 @@
 # autoKSHelp
 
-A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.16.
+A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.17.
 
 ![Auto Keyboard Shortcuts](screenshots/autoKSHelp.png)
 ![Auto Keyboard Shortcuts with Alternates](screenshots/autoKSHelp-alternates.png)
@@ -21,7 +21,7 @@ To update, quit the app from its menubar menu, replace it in `/Applications` and
 | Show / hide | **⌃⌘/** (or menubar icon → *Show Shortcuts*) |
 | Open with other commands shown | **⇧⌃⌘/** |
 | Show / hide other commands (popup open) | Tap **⇧ Shift** on its own, or click the **⇧ Other Commands** header button |
-| Show / hide alternate menu items (popup open) | Tap **⌥ Option** on its own, or click the **⌥ Alternates** header button |
+| Show / hide alternate menu items inline below their base items (popup open) | Tap **⌥ Option** on its own, or click the **⌥ Alternates** header button |
 | Navigate the list | **↑ ↓** within a column, **← →** between columns (while the search box is empty), **Tab** / **⇧Tab** next / previous |
 | Search | Just type (title, menu path or keys) |
 | Run a command | Click a row, press **Enter** (the highlighted row — the first one by default), or type its shortcut (needs ⌘ or ⌃, or an F-key) |
@@ -46,6 +46,7 @@ The two header buttons save exactly what the popup currently shows — search fi
 
 ## Changelog
 
+- **0.0.17** — Alternates are now listed inline, right below the item they replace (indented, in the accent color of the Alternates button), instead of replacing it.
 - **0.0.16** — the popup header shows the release version.
 - **0.0.15** — removed the "Show Other Commands" item from the menubar menu (still available via the header button, Shift tap and ⇧⌃⌘/).
 - **0.0.14** — eye toggle: view the PDF / HTML export immediately (temporary file, opened in the default viewer) instead of going through the save dialog.

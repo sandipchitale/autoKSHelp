@@ -14,7 +14,7 @@ See `screenshots/autoKSHelp.png` (light) and `screenshots/autoKSHelp-alternates.
 
 **Content**
 - Shortcuts are read from the frontmost app's menu bar through the Accessibility API (permission required). Arrow and function keys, which menus report as private-use Unicode characters (U+F700…), are translated to symbols (↑ ↓ ← →, F1–F35, ⌦, ⇞ …) so no key renders as a missing-glyph box, and so typed shortcuts match menu shortcuts.
-- Tapping **Option** on its own toggles the alternate menu items (e.g. Close All) in place of their base items, so it need not be held. The header has a toggle button **⌥ Alternates** (clickable too) that shows the state; its label is constant so the layout never shifts. (The original spec said to hold Option; it was changed to a toggle on request.)
+- Tapping **Option** on its own toggles the alternate menu items (e.g. Close All): each is listed inline directly below its base item (indented, in the accent color of the Alternates button), as in the exports. The layout reflows when they appear; search matches an item or its alternate. The header has a toggle button **⌥ Alternates** (clickable too) that shows the state; its label is constant so the layout never shifts. (The original spec said to hold Option; it was changed to a toggle on request.)
 - *Other Commands*: enabled menu commands without a shortcut are listed in a separate section below the shortcuts (off by default; toggled by tapping Shift on its own or the **⇧ Other Commands** header button).
 
 **Keyboard navigation**
