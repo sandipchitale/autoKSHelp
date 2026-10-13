@@ -1,6 +1,6 @@
 # autoKSHelp
 
-A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.13.
+A macOS menubar app that pops up the keyboard shortcuts of the frontmost app, read from its menu bar. Built with Swift/SwiftUI. Version 0.0.14.
 
 ![Auto Keyboard Shortcuts](screenshots/autoKSHelp.png)
 ![Auto Keyboard Shortcuts with Alternates](screenshots/autoKSHelp-alternates.png)
@@ -26,6 +26,7 @@ To update, quit the app from its menubar menu, replace it in `/Applications` and
 | Search | Just type (title, menu path or keys) |
 | Run a command | Click a row, press **Enter** (the highlighted row — the first one by default), or type its shortcut (needs ⌘ or ⌃, or an F-key) |
 | Save the current view | Header buttons **PDF** (document icon) and **HTML** (`</>` icon) — landscape, see below |
+| Just view it, without saving | Turn on the **eye** toggle (left of PDF / HTML): the file is written to a temporary folder and opened in your default viewer, no save dialog |
 | Hide | **Esc** or click elsewhere |
 | Move | Drag any empty part of the popup |
 
@@ -41,9 +42,11 @@ The two header buttons save exactly what the popup currently shows — search fi
 - **Both variants at once:** each item's Option alternate is listed right below it (indented, orange, with its ⌥ key) regardless of whether Alternates is toggled on.
 - **PDF** is paginated (A4 in metric locales, US Letter otherwise) with vector text; groups continue on the next column/page with a "(cont.)" header.
 - **HTML** is a single self-contained file (the icon is embedded) that also prints landscape.
+- **View mode:** with the **eye** toggle on (remembered between launches), the PDF / HTML buttons skip the save dialog, write the file to a temporary folder (`autoKSHelp-preview`, overwritten on each view) and open it in the default viewer (Preview / your browser).
 
 ## Changelog
 
+- **0.0.14** — eye toggle: view the PDF / HTML export immediately (temporary file, opened in the default viewer) instead of going through the save dialog.
 - **0.0.13** — fix: shortcuts using arrow keys or F-keys (e.g. F8, ⌥⌘→) showed a "?" box instead of the key; they now show ↑ ↓ ← → and F1–F35, and typing such a shortcut in the popup now runs it.
 - **0.0.12** — README: light and dark (Alternates on) screenshots; no functional changes.
 - **0.0.11** — save the current view as landscape PDF or HTML (header buttons): includes the app icon, shows Alternates inline below their items, matches the popup's appearance.

@@ -58,6 +58,11 @@ struct ShortcutsView: View {
                 .toggleStyle(.button)
                 .help(model.othersShown ? "Showing commands without shortcuts (press ⇧ Shift or click to hide)"
                                         : "Press ⇧ Shift or click to show commands without shortcuts")
+            Toggle(isOn: $model.viewInsteadOfSave) { Image(systemName: "eye") }
+                .toggleStyle(.button)
+                .help(model.viewInsteadOfSave
+                      ? "View on: the PDF / HTML buttons open the file for viewing (saved in a temporary folder, no save dialog)"
+                      : "View off: the PDF / HTML buttons ask where to save. Turn on to just view the file.")
             Button { model.onExport(.pdf) } label: { Image(systemName: "doc.richtext") }
                 .disabled(model.items.isEmpty)
                 .help("Save the current view as a landscape PDF")

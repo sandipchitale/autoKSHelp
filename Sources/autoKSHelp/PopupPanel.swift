@@ -124,6 +124,10 @@ final class PopupController {
         }
         let snapshot = model.snapshot(dark: dark)
         let ext = kind == .pdf ? "pdf" : "html"
+        if model.viewInsteadOfSave {
+            preview(kind, snapshot: snapshot, ext: ext)
+            return
+        }
         panel.suspendHide = true
         NSApp.activate(ignoringOtherApps: true)
         let sp = NSSavePanel()
@@ -136,10 +140,7 @@ final class PopupController {
             MainActor.assumeIsolated {
                 if response == .OK, let url = sp.url {
                     do {
-                        switch kind {
-                        case .pdf: try PDFExporter.write(snapshot, to: url)
-                        case .html: try ExportHTML.render(snapshot).write(to: url, atomically: true, encoding: .utf8)
-                        }
+                        try Self.write(kind, snapshot, to: url)
                     } catch {
                         NSAlert(error: error).runModal()
                     }
@@ -147,6 +148,27 @@ final class PopupController {
                 self?.panel.suspendHide = false
                 self?.panel.makeKeyAndOrderFront(nil)
             }
+        }
+    }
+
+    private static func write(_ kind: ExportKind, _ snapshot: ExportSnapshot, to url: URL) throws {
+        switch kind {
+        case .pdf: try PDFExporter.write(snapshot, to: url)
+        case .html: try ExportHTML.render(snapshot).write(to: url, atomically: true, encoding: .utf8)
+        }
+    }
+
+    /// Writes the export to a temporary folder (no save dialog) and opens it in the default viewer.
+    private func preview(_ kind: ExportKind, snapshot: ExportSnapshot, ext: String) {
+        do {
+            let dir = FileManager.default.temporaryDirectory.appendingPathComponent("autoKSHelp-preview", isDirectory: true)
+            try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+            let name = snapshot.appName.replacingOccurrences(of: "/", with: "-")
+            let url = dir.appendingPathComponent("\(name) keyboard shortcuts.\(ext)")
+            try Self.write(kind, snapshot, to: url)
+            NSWorkspace.shared.open(url)
+        } catch {
+            NSAlert(error: error).runModal()
         }
     }
 

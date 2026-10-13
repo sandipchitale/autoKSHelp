@@ -2,7 +2,7 @@
 
 Develop a menubar applet that generates a keyboard shortcuts popup using the frontmost apps menu. With options alternate actions. So if I hold the Option key down show those actions instead. The display should be a nicely formated light weight popup window that appeares at the screen center. Add search at the top to narrow down the list. Escape should hide the popup. Use Swift/Swift UI.
 
-## Implemented behavior (v0.0.13)
+## Implemented behavior (v0.0.14)
 
 See `screenshots/autoKSHelp.png` (light) and `screenshots/autoKSHelp-alternates.png` (dark, Alternates on) for the popup: 4 columns, header toggles, export and appearance buttons.
 
@@ -25,6 +25,7 @@ See `screenshots/autoKSHelp.png` (light) and `screenshots/autoKSHelp-alternates.
 
 **Export (PDF / HTML)**
 - Two header buttons (PDF, HTML) save the popup's *current state* — search filter, Other Commands on/off, and the light/dark appearance — through a save dialog. The popup stays open meanwhile, and its key handling ignores the dialog's keystrokes.
+- An **eye** toggle (persisted, off by default) switches the export buttons to *view mode*: instead of the save dialog, the file is written to a temporary folder (`autoKSHelp-preview/<App> keyboard shortcuts.<ext>`, overwritten each time) and opened in the default viewer. Content is identical to a saved export.
 - Output is **landscape** in the same 4-column layout, with the app's icon, name, item count and date in the header. Both variants are exported at once: each item's Option alternate is listed directly below it (indented, accent color, ⌥ key tinted likewise), independent of the Alternates toggle; the header notes "Alternates (⌥)" in the same accent color.
 - PDF: paginated (A4 landscape in metric locales, US Letter otherwise), vector text; a row and its alternate never split across columns, headers are never orphaned, and groups continue with a "(cont.)" header. HTML: one self-contained file (icon embedded as data) with `@page { size: landscape }`.
 

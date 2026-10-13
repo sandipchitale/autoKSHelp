@@ -43,6 +43,11 @@ final class ViewModel: ObservableObject {
         didSet { UserDefaults.standard.set(showOtherCommands, forKey: "showOtherCommands") }
     }
 
+    /// When on, the PDF / HTML buttons write to a temporary folder and open the file for viewing (no save dialog).
+    @Published var viewInsteadOfSave = UserDefaults.standard.bool(forKey: "viewInsteadOfSave") {
+        didSet { UserDefaults.standard.set(viewInsteadOfSave, forKey: "viewInsteadOfSave") }
+    }
+
     var othersShown: Bool { showOtherCommands }
 
     /// Option / Shift toggle only when tapped *exclusively*: pressed and released alone, with no other
