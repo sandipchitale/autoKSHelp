@@ -38,6 +38,8 @@ struct ShortcutsView: View {
         .onChange(of: model.items.count) { _ in focused = true }
     }
 
+    private static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "dev"
+
     private var header: some View {
         HStack(spacing: 10) {
             if let icon = model.appIcon {
@@ -75,6 +77,7 @@ struct ShortcutsView: View {
                 }
             }
             .pickerStyle(.segmented).labelsHidden().fixedSize()
+            Text("v\(Self.version)").font(.caption).foregroundStyle(.secondary).fixedSize()
         }
         .padding(14)
     }

@@ -2,7 +2,7 @@
 
 Develop a menubar applet that generates a keyboard shortcuts popup using the frontmost apps menu. With options alternate actions. So if I hold the Option key down show those actions instead. The display should be a nicely formated light weight popup window that appeares at the screen center. Add search at the top to narrow down the list. Escape should hide the popup. Use Swift/Swift UI.
 
-## Implemented behavior (v0.0.15)
+## Implemented behavior (v0.0.16)
 
 See `screenshots/autoKSHelp.png` (light) and `screenshots/autoKSHelp-alternates.png` (dark, Alternates on) for the popup: 4 columns, header toggles, export and appearance buttons.
 
@@ -10,7 +10,7 @@ See `screenshots/autoKSHelp.png` (light) and `screenshots/autoKSHelp-alternates.
 - Menubar applet (no Dock icon, no windows at launch — plain AppKit entry point, no SwiftUI app scene); the menu shows the app name and version, *Show Shortcuts*, *Accessibility Settings…* and *Quit*.
 - Borderless popup centered on screen, 70% of the usable screen height and at most 1600 px wide, draggable by any non-interactive spot. It does not steal focus from the frontmost app, and hides on Escape or when it loses focus.
 - Fixed 4-column layout with the shortcut right next to the action name, grouped by top-level menu. The height never changes while the popup is open; the vertical scrollbar space is always reserved so the layout does not shift.
-- Search field at the top (focused on open) filters by title, menu path or keys. Appearance buttons: Light (default, white), Dark, System.
+- Search field at the top (focused on open) filters by title, menu path or keys. Appearance buttons: Light (default, white), Dark, System. The release version (e.g. v0.0.15) is shown small at the right end of the header.
 
 **Content**
 - Shortcuts are read from the frontmost app's menu bar through the Accessibility API (permission required). Arrow and function keys, which menus report as private-use Unicode characters (U+F700…), are translated to symbols (↑ ↓ ← →, F1–F35, ⌦, ⇞ …) so no key renders as a missing-glyph box, and so typed shortcuts match menu shortcuts.
