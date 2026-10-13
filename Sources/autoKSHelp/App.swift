@@ -6,7 +6,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private var popup: PopupController!
     private var hotKeys: [HotKey] = []
-    private var otherCommandsItem: NSMenuItem!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -21,15 +20,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(titleItem)
         menu.addItem(.separator())
         menu.addItem(withTitle: "Show Shortcuts (⌃⌘/)", action: #selector(show), keyEquivalent: "").target = self
-        otherCommandsItem = NSMenuItem(title: "Show Other Commands", action: #selector(toggleShowOtherCommands), keyEquivalent: "")
-        otherCommandsItem.target = self
-        otherCommandsItem.state = popup.model.showOtherCommands ? .on : .off
-        menu.addItem(otherCommandsItem)
         menu.addItem(withTitle: "Accessibility Settings…", action: #selector(openSettings), keyEquivalent: "").target = self
         menu.addItem(.separator())
         menu.addItem(withTitle: "Quit autoKSHelp", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         statusItem.menu = menu
-        menu.delegate = self
 
         // ⌃⌘/ shows (shortcuts only) or hides; ⇧⌃⌘/ opens with other commands shown. Once open, Shift alone toggles them.
         let base = UInt32(controlKey | cmdKey)
@@ -42,19 +36,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func show() { popup.show() }
 
-    @objc func toggleShowOtherCommands() {
-        popup.model.showOtherCommands.toggle()
-        otherCommandsItem?.state = popup.model.showOtherCommands ? .on : .off
-    }
-
     @objc func openSettings() {
         NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
-    }
-}
-
-extension AppDelegate: NSMenuDelegate {
-    func menuNeedsUpdate(_ menu: NSMenu) {
-        otherCommandsItem?.state = popup.model.showOtherCommands ? .on : .off
     }
 }
 
